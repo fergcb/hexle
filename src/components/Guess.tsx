@@ -9,7 +9,7 @@ export interface GuessProps {
 export default function Guess ({ value, idx }: GuessProps): ReactElement {
   const swatchStyle = {
     backgroundColor: value !== '' ? `#${value}` : 'var(--tint-05)',
-    ...getCSSTints(value),
+    ...(value !== '' ? getCSSTints(value) : {}),
   }
 
   return <li className="flex gap-2 items-center bg-tint/5 pr-2 font-mono text-lg md:text-2xl font-semibold">
