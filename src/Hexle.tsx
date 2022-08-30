@@ -25,7 +25,7 @@ export interface GameData {
 export function getDailyTarget (): string {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
-  const x = Math.sin(today.getTime()) * 10000
+  const x = Math.sin(today.getTime() * 1000) * 10000
   const y = x - Math.floor(x)
   const z = Math.floor(16777215 * y)
   return z.toString(16).padStart(6, '0')
