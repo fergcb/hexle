@@ -25,13 +25,10 @@ export interface GameData {
 export function getDailyTarget (): string {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
-  const r = (today.getTime() * 859433) & 0xff
-  const g = (today.getTime() * 756839) & 0xff
-  const b = (today.getTime() * 216091) & 0xff
-  const hr = r.toString(16).padStart(2, '0')
-  const hg = g.toString(16).padStart(2, '0')
-  const hb = b.toString(16).padStart(2, '0')
-  return hr + hg + hb
+  const x = Math.sin(today.getTime()) * 10000
+  const y = x - Math.floor(x)
+  const z = Math.floor(16777215 * y)
+  return z.toString(16).padStart(6, '0')
 }
 
 /* COLOURS & SCORING */
