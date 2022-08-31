@@ -52,7 +52,6 @@ export default function HexBox ({ value: parentValue, invalid, disabled, onUpdat
   }
 
   const refocus = (): void => {
-    if (disabled || isTouchscreen()) return
     setTimeout(() => {
       if (inputRef?.current === null) return
       inputRef.current.focus()
