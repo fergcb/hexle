@@ -9,6 +9,11 @@ export interface HexBoxProps {
   onKey: (key: string) => void
 }
 
+function isTouchscreen (): boolean {
+  return (('ontouchstart' in window) ||
+      (navigator.maxTouchPoints > 0))
+}
+
 export default function HexBox ({ value: parentValue, invalid, disabled, onUpdate, onSubmit, onKey }: HexBoxProps): ReactElement {
   const [value, setValue] = useState(parentValue)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -47,7 +52,7 @@ export default function HexBox ({ value: parentValue, invalid, disabled, onUpdat
   }
 
   const refocus = (): void => {
-    if (disabled) return
+    if (disabled || isTouchscreen()) return
     setTimeout(() => {
       if (inputRef?.current === null) return
       inputRef.current.focus()
@@ -62,7 +67,7 @@ export default function HexBox ({ value: parentValue, invalid, disabled, onUpdat
 
   return <form onSubmit={handleSubmit} className="flex items-center" style={invalidStyles}>
     <span className="font-mono font-bold text-6xl sm:text-7xl md:text-9xl bg-tint/10 text-tint/25 leading-[1.25em] sm:leading-[1.25em] md:leading-[1.25em] pl-2">#</span>
-    <input autoFocus={!disabled} ref={inputRef} type="text" maxLength={6} value={value} onBlur={refocus} onKeyDown={handleKeyPress} onChange={handleChange} className="font-mono font-bold text-6xl sm:text-7xl md:text-9xl bg-tint/10 h-[1.25em] pr-2 text-tint/50 border-none focus:ring-0 focus:outline-none w-full md:w-[calc(6ch+0.2em)]" />
+    <input autoFocus readOnly={disabled || isTouchscreen()} ref={inputRef} type="text" maxLength={6} value={value} onBlur={refocus} onKeyDown={handleKeyPress} onChange={handleChange} className="font-mono font-bold text-6xl sm:text-7xl md:text-9xl bg-tint/10 h-[1.25em] pr-2 text-tint/50 border-none focus:ring-0 focus:outline-none w-full md:w-[calc(6ch+0.2em)]" />
     <button className="sr-only">Submit</button>
   </form>
 }
