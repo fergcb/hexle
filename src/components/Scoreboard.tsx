@@ -34,6 +34,24 @@ export default function Scoreboard ({ gameData }: ScoreboardProps): ReactElement
   const { guesses, target, score, date } = todaysGame
   const today = new Date(date).toLocaleDateString()
 
+  function handleShare (): void {
+    const shareData: ShareData = {
+      title: 'Hexle',
+      text: `
+I scored ${score} in today's Hexle.
+
+🔥 Streak: ${gameData.currentStreak}
+🧮 Total Score: ${gameData.totalScore}
+
+Try to beat my score: https://hexle.fergcb.uk
+`,
+      url: 'https://hexle.fergcb.uk',
+    }
+
+    navigator.share(shareData)
+      .catch(err => console.error(err))
+  }
+
   return <div className="absolute t-0 l-0 w-screen h-screen -mt-4 md:mt-0 font-mono text-zinc-300 bg-tint/50 flex justify-center items-center">
     <div className="m-4 max-h-full bg-zinc-800 rounded-lg p-4 flex flex-col items-center">
       <h2 className="font-bold text-3xl md:text-4xl whitespace-nowrap text-center mb-8l">Hexle - {today}</h2>
@@ -48,7 +66,10 @@ export default function Scoreboard ({ gameData }: ScoreboardProps): ReactElement
       <div className="text-center text-xl">
         {scoreMessage(score)}
       </div>
-      <div className="flex flex-wrap max-w-sm mt-8 gap-4 justify-center">
+      <button onClick={handleShare} className="mt-2 flex justify-center items-center rounded-full fill-zinc-500 hover:bg-zinc-700 hover:fill-zinc-400 transition-colors duration-200 w-14 h-14">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox='0 0 48 48' className="w-10 h-10 relative -left-0.5"><path d="M36.35 45.05q-2.8 0-4.8-2.025t-2-4.725q0-.4.1-.925t.2-1.025l-13.35-7.8q-.95 1-2.175 1.625-1.225.625-2.625.625-2.7 0-4.725-2.025Q4.95 26.75 4.95 24q0-2.8 2.025-4.775Q9 17.25 11.7 17.25q1.4 0 2.6.525 1.2.525 2.2 1.525l13.35-7.7q-.1-.35-.2-.925-.1-.575-.1-.925 0-2.75 2-4.75t4.8-2q2.75 0 4.75 2t2 4.75q0 2.75-2.025 4.75t-4.725 2q-1.5 0-2.65-.4t-2.05-1.4L18.25 22q.1.45.175 1.05.075.6.075.95t-.075.825q-.075.475-.175.925l13.4 7.5q.9-.8 2.025-1.275Q34.8 31.5 36.35 31.5q2.7 0 4.725 2.025Q43.1 35.55 43.1 38.3q0 2.7-2 4.725-2 2.025-4.75 2.025Z"/></svg>
+      </button>
+      <div className="flex flex-wrap max-w-sm mt-4 gap-4 justify-center">
         <div className="text-center font-bold">
           <h3>Current Streak:</h3>
           <div className="text-3xl">{gameData.currentStreak}</div>
