@@ -4,24 +4,22 @@ export type Hex = string
 export type RGB = [number, number, number]
 export type LAB = [number, number, number]
 
-export type ISODate = `${number}-${number}-${number}`
-
 export interface Outcome {
   target: string
   guesses: string[]
   score: number
-  date: ISODate
+  date: string
 }
 
 export interface GameData {
-  games: { [key: ISODate]: Outcome }
+  games: { [key: string]: Outcome }
   currentStreak: number
   longestStreak: number
   totalScore: number
 }
 
 /* TARGETS */
-const a = (): number => parseInt(new Date().toISOString().split('T')[0].replaceAll('-', ''))
+const a = (): number => parseInt(getToday().replaceAll('-', ''))
 const b = (): number => Math.sin(a() * 524287 / 8191)
 const c = (): number => Math.floor((b() - Math.floor(b())) * 16777215)
 const d = (): string => c().toString(16).padStart(6, '0')
@@ -139,13 +137,17 @@ export function loadData (): GameData {
   return data
 }
 
-export function getIsoDate (date: Date): ISODate {
-  return date.toISOString().split('T')[0] as ISODate
+export function getToday (): string {
+  const date = new Date()
+  const y = date.getFullYear().toString()
+  const m = (date.getMonth() + 1).toString().padStart(2, '0')
+  const d = date.getDate().toString().padStart(2, '0')
+  return `${y}-${m}-${d}`
 }
 
 export function getLastGame (data: GameData): Outcome | undefined {
   const lastDateString = Object.keys(data.games).sort().reverse()[0]
-  return data.games[lastDateString as ISODate]
+  return data.games[lastDateString]
 }
 
 const oneDay = 86400000

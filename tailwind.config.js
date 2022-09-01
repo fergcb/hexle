@@ -9,7 +9,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        mono: ['Fira Code', ...defaultTheme.fontFamily.sans]
+        mono: ['Fira Code', ...defaultTheme.fontFamily.mono]
       },
       colors: {
         ...Object.fromEntries(

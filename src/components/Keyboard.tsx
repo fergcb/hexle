@@ -63,7 +63,7 @@ export function Break (): ReactElement {
 }
 
 export default function Keyboard ({ onClick, keySource }: KeyboardProps): ReactElement {
-  return <div className="grid grid-cols-6 gap-1 mt-auto mb-16 md:mt-8 justify-center max-w-32">
+  return <div className="grid grid-cols-6 gap-1 mb-16 justify-center max-w-32">
     <CharKey char="0" onClick={onClick} keySource={keySource} />
     <CharKey char="1" onClick={onClick} keySource={keySource} />
     <CharKey char="2" onClick={onClick} keySource={keySource} />

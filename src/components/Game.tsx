@@ -1,27 +1,29 @@
 import { ReactElement, useState, useEffect, useCallback } from 'react'
-import { calculateScore, getCSSTints, getDailyTarget, getIsoDate, getLastGame, getLongestStreak, getStreak, isValidHex, loadData } from '../Hexle'
+import { calculateScore, getCSSTints, getDailyTarget, getToday, getLastGame, getLongestStreak, getStreak, isValidHex, loadData } from '../Hexle'
 import Observable from '../Observable'
 import GuessList from './GuessList'
+import HelpButton from './HelpButton'
 import HexBox from './HexBox'
+import Instructions from './Instructions'
 import Keyboard from './Keyboard'
 import Scoreboard from './Scoreboard'
 
 export default function Game (): ReactElement {
-  const target = getDailyTarget()
-
   const [gameData, setGameData] = useState(loadData)
-  const [hasPlayedToday, setHasPlayedToday] = useState(false)
   const [numGuessed, setNumGuessed] = useState(0)
   const [guesses, setGuesses] = useState<string[]>(['', '', '', ''])
   const [hex, setHex] = useState<string>('')
   const [invalid, setInvalid] = useState(false)
   const [gameOver, setGameOver] = useState(false)
+  const [showInstructions, setShowInstructions] = useState(!hasPlayedBefore())
 
   const keySource = new Observable<string>()
 
   const doEndGame = useCallback(() => {
+    const target = getDailyTarget()
+
     const score = calculateScore(guesses[3], target)
-    const date = getIsoDate(new Date())
+    const date = getToday()
 
     const data = structuredClone(gameData)
 
@@ -35,7 +37,7 @@ export default function Game (): ReactElement {
 
     setGameOver(true)
     setGameData(data)
-  }, [gameData, guesses, target])
+  }, [gameData, guesses])
 
   useEffect(() => {
     if (gameOver) return
@@ -44,11 +46,15 @@ export default function Game (): ReactElement {
     }
   }, [guesses, numGuessed, gameOver, doEndGame])
 
-  useEffect(() => {
-    const today = getIsoDate(new Date())
+  function hasPlayedToday (): boolean {
     const lastGame = getLastGame(gameData)
-    setHasPlayedToday(lastGame !== undefined && lastGame.date === today)
-  }, [gameData])
+    if (lastGame === undefined) return false
+    return lastGame.date === getToday()
+  }
+
+  function hasPlayedBefore (): boolean {
+    return Object.entries(gameData.games).length > 0
+  }
 
   function handleGuess (): void {
     if (numGuessed > 3) return
@@ -78,10 +84,15 @@ export default function Game (): ReactElement {
     else if (hex.length < 6) setHex(hex + value)
   }
 
+  const target = getDailyTarget()
+
   return <div style={{ backgroundColor: `#${target}`, ...getCSSTints(target) }} className="w-screen h-screen flex flex-col items-center md:justify-center p-4 gap-4">
-    <HexBox value={hex} invalid={invalid} disabled={gameOver || hasPlayedToday} onUpdate={setHex} onKey={handleKey} onSubmit={handleGuess} />
+    <HexBox value={hex} invalid={invalid} disabled={gameOver || hasPlayedToday()} onUpdate={setHex} onKey={handleKey} onSubmit={handleGuess} />
     <GuessList guesses={guesses} />
+    <div className="my-auto md:my-8"></div>
+    <HelpButton onClick={() => setShowInstructions(true)}></HelpButton>
     <Keyboard onClick={handleVirtualKey} keySource={keySource} />
-    {(gameOver || hasPlayedToday) && <Scoreboard gameData={gameData} />}
+    {(gameOver || hasPlayedToday()) && <Scoreboard gameData={gameData} />}
+    {(showInstructions) && <Instructions onClose={() => setShowInstructions(false)} />}
   </div>
 }
