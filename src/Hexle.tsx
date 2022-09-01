@@ -21,14 +21,13 @@ export interface GameData {
 }
 
 /* TARGETS */
+const a = (): number => parseInt(new Date().toISOString().split('T')[0].replaceAll('-', ''))
+const b = (): number => Math.sin(a() * 524287 / 8191)
+const c = (): number => Math.floor((b() - Math.floor(b())) * 16777215)
+const d = (): string => c().toString(16).padStart(6, '0')
 
 export function getDailyTarget (): string {
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  const x = Math.sin(today.getTime() * 1000) * 10000
-  const y = x - Math.floor(x)
-  const z = Math.floor(16777215 * y)
-  return z.toString(16).padStart(6, '0')
+  return d()
 }
 
 /* COLOURS & SCORING */

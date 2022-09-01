@@ -3,6 +3,7 @@
     "strict": true,
     "strictNullChecks": true,
     "esModuleInterop": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "lib": ["dom", "es2021"]
   }
 }
