@@ -43,7 +43,7 @@ I scored ${score} in today's Hexle.
 🔥 Streak: ${gameData.currentStreak}
 🧮 Total Score: ${gameData.totalScore}
 
-Try to beat my score: https://hexle.fergcb.uk
+Try to beat my score!
 `,
       url: 'https://hexle.fergcb.uk',
     }
