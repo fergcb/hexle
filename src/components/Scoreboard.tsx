@@ -44,7 +44,7 @@ I scored ${score} in today's Hexle.
 🧮 Total Score: ${gameData.totalScore}
 
 Try to beat my score!
-`,
+`.trim(),
       url: 'https://hexle.fergcb.uk',
     }
 
