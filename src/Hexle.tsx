@@ -120,6 +120,16 @@ export function calculateScore (guess: Hex, target: Hex): number {
   return Math.round((100 - delta(guess, target)) * 50)
 }
 
+export function scoreMessage (score: number): string {
+  if (score === 5000) return 'Exact match!'
+  if (score >= 4950) return 'Imperceptibly close!'
+  if (score >= 4900) return 'Perceptibly different, given a close look.'
+  if (score >= 4500) return 'Perceptibly different, at a glance.'
+  if (score >= 2550) return 'More similar than different.'
+  if (score > 0) return 'More different than similar.'
+  return 'Exact opposites.'
+}
+
 /* Data Persistence */
 
 export function loadData (): GameData {
