@@ -16,16 +16,22 @@ export interface GameData {
   currentStreak: number
   longestStreak: number
   totalScore: number
+  unlimitedGames: Outcome[]
 }
 
 /* TARGETS */
+
 const a = (): number => parseInt(getToday().replaceAll('-', ''))
-const b = (): number => Math.sin(a() * 524287 / 8191)
-const c = (): number => Math.floor((b() - Math.floor(b())) * 16777215)
-const d = (): string => c().toString(16).padStart(6, '0')
+const b = (a: number): number => Math.sin(a * 524287 / 8191)
+const c = (b: number): number => Math.floor((b - Math.floor(b)) * 16777215)
+const d = (c: number): string => c.toString(16).padStart(6, '0')
 
 export function getDailyTarget (): string {
-  return d()
+  return d(c(b(a())))
+}
+
+export function getRandomTarget (): string {
+  return d(Math.floor(Math.random() * 16777215))
 }
 
 /* COLOURS & SCORING */
@@ -133,18 +139,21 @@ export function scoreMessage (score: number): string {
 /* Data Persistence */
 
 export function loadData (): GameData {
+  const defaultData = {
+    games: {},
+    currentStreak: 0,
+    longestStreak: 0,
+    totalScore: 0,
+    unlimitedGames: [],
+  }
+
   const json = localStorage.getItem('hexleData')
   if (json === null) {
-    return {
-      games: {},
-      currentStreak: 0,
-      longestStreak: 0,
-      totalScore: 0,
-    }
+    return defaultData
   }
   const data = JSON.parse(json) as GameData
   data.currentStreak = checkStreak(data)
-  return data
+  return { ...defaultData, ...data }
 }
 
 export function getToday (): string {

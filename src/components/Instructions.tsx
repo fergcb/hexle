@@ -17,7 +17,10 @@ export default function Instructions ({ onClose }: InstructionsProps): ReactElem
       <p>The closer the visual match after four guesses, the higher your score. You'll get 5000 points for a perfect match, down to 0 if you enter the perfect opposite colour.</p>
       <h3 className="font-semibold text-xl mt-4 mb-1">Repeat</h3>
       <p>Come back daily to check the colour of the day, but try not to spoil the game for other players by sharing the answer in the meantime!</p>
-      <Button className="ml-auto mt-4" onClick={() => onClose()}>Play</Button>
+      <div className="flex w-full justify-end gap-4">
+        <Button className="mt-4" dark link="/unlimited">Unlimited</Button>
+        <Button className="mt-4" onClick={() => onClose()}>Play</Button>
+      </div>
     </div>
   </div>
 }
