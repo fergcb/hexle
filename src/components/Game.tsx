@@ -1,7 +1,6 @@
 import { ReactElement, useState, useEffect, useCallback } from 'react'
 import { calculateScore, getCSSTints, getDailyTarget, getToday, getLastGame, getLongestStreak, getStreak, isValidHex, loadData, getRandomTarget } from '../Hexle'
 import Observable from '../Observable'
-import Button from './Button'
 import GuessList from './GuessList'
 import HelpButton from './HelpButton'
 import HexBox from './HexBox'
@@ -106,14 +105,16 @@ export default function Game ({ unlimited = false }: GameProps): ReactElement {
   return <div style={{ backgroundColor: `#${target}`, ...getCSSTints(target) }} className="w-screen h-screen flex flex-col items-center md:justify-center p-4 gap-4">
     <HexBox value={hex} invalid={invalid} disabled={gameOver || hasPlayedToday()} onUpdate={setHex} onKey={handleKey} onSubmit={handleGuess} />
     <GuessList guesses={guesses} />
-    <div className="my-auto md:my-8"></div>
-    { (!unlimited) && <>
-      <Button dark onClick={showUnlimitedAd} className={'relative w-16 h-16' + (!seenUnlimitedAd() ? ' animate-pulse' : '')}>
-        {!seenUnlimitedAd() && <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-16 h-16 absolute t-0 fill-tint/20 animate-ping"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/></svg> }
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-16 h-16 absolute t-0 fill-tint/20 "><path d="M22.42 11.34l-1.86-2.12.26-2.81c.05-.5-.29-.96-.77-1.07l-2.76-.63-1.44-2.43c-.26-.43-.79-.61-1.25-.41L12 3 9.41 1.89c-.46-.2-1-.02-1.25.41L6.71 4.72l-2.75.62c-.49.11-.83.56-.78 1.07l.26 2.8-1.86 2.13c-.33.38-.33.94 0 1.32l1.86 2.12-.26 2.82c-.05.5.29.96.77 1.07l2.76.63 1.44 2.42c.26.43.79.61 1.26.41L12 21l2.59 1.11c.46.2 1 .02 1.25-.41l1.44-2.43 2.76-.63c.49-.11.82-.57.77-1.07l-.26-2.81 1.86-2.12c.34-.36.34-.92.01-1.3zM13 17h-2v-2h2v2zm-1-4c-.55 0-1-.45-1-1V8c0-.55.45-1 1-1s1 .45 1 1v4c0 .55-.45 1-1 1z"/></svg>
-      </Button>
-    </> }
-    <HelpButton onClick={() => setShowInstructions(true)}></HelpButton>
+    <div className="mt-auto md:my-4"></div>
+    <div className="flex gap-4">
+      <HelpButton onClick={() => setShowInstructions(true)}></HelpButton>
+      { (!unlimited) && <>
+        <button onClick={showUnlimitedAd} className={'relative block w-12 h-12 min-h-[48px]' + (!seenUnlimitedAd() ? ' animate-pulse' : '')}>
+          {!seenUnlimitedAd() && <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-16 h-16 absolute -top-2 -left-2 fill-tint/20 animate-ping"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/></svg> }
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-[52px] h-[52px] absolute -top-0.5 -left-0.5 fill-tint/30 "><path d="M22.42 11.34l-1.86-2.12.26-2.81c.05-.5-.29-.96-.77-1.07l-2.76-.63-1.44-2.43c-.26-.43-.79-.61-1.25-.41L12 3 9.41 1.89c-.46-.2-1-.02-1.25.41L6.71 4.72l-2.75.62c-.49.11-.83.56-.78 1.07l.26 2.8-1.86 2.13c-.33.38-.33.94 0 1.32l1.86 2.12-.26 2.82c-.05.5.29.96.77 1.07l2.76.63 1.44 2.42c.26.43.79.61 1.26.41L12 21l2.59 1.11c.46.2 1 .02 1.25-.41l1.44-2.43 2.76-.63c.49-.11.82-.57.77-1.07l-.26-2.81 1.86-2.12c.34-.36.34-.92.01-1.3zM13 17h-2v-2h2v2zm-1-4c-.55 0-1-.45-1-1V8c0-.55.45-1 1-1s1 .45 1 1v4c0 .55-.45 1-1 1z"/></svg>
+        </button>
+      </> }
+    </div>
     <Keyboard onClick={handleVirtualKey} keySource={keySource} />
     {(gameOver || (!unlimited && hasPlayedToday())) && <Scoreboard {...{ gameData, unlimited }} />}
     {(showInstructions) && <Instructions onClose={() => setShowInstructions(false)} />}
