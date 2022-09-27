@@ -1,5 +1,5 @@
 import { ButtonHTMLAttributes, DetailedHTMLProps, ReactElement } from 'react'
-import { getCSSTints, getDailyTarget } from '../Hexle'
+import { getCSSTints, getDailyTarget, isColourDark } from '../Hexle'
 
 export type ButtonProps = DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> & {
   color?: string
@@ -10,7 +10,7 @@ export type ButtonProps = DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonEleme
 export default function Button ({ children, color, dark = false, link, onClick, ...props }: ButtonProps): ReactElement {
   color = color ?? getDailyTarget()
 
-  const tints = getCSSTints(color)
+  const tints = getCSSTints(isColourDark(color))
   const style = {
     background: dark ? 'transparent' : `#${color}`,
     color: dark ? `#${color}` : 'var(--tint-70)',

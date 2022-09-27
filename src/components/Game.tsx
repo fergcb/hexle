@@ -1,5 +1,5 @@
 import { ReactElement, useState, useEffect, useCallback } from 'react'
-import { calculateScore, getCSSTints, getDailyTarget, getToday, getLastGame, getLongestStreak, getStreak, isValidHex, loadData, getRandomTarget } from '../Hexle'
+import { calculateScore, getCSSTints, getDailyTarget, getToday, getLastGame, getLongestStreak, getStreak, isValidHex, loadData, getRandomTarget, isColourDark } from '../Hexle'
 import Observable from '../Observable'
 import GuessList from './GuessList'
 import HelpButton from './HelpButton'
@@ -23,6 +23,11 @@ export default function Game ({ unlimited = false }: GameProps): ReactElement {
   const [showInstructions, setShowInstructions] = useState(!unlimited && !hasPlayedBefore())
   const [modalContent, setModalContent] = useState<ReactElement | null>(null)
   const [target] = useState(unlimited ? getRandomTarget() : getDailyTarget())
+  const [theme, setTheme] = useState<string>('auto')
+  const [highContrast, setHighContrast] = useState(localStorage.getItem('hexle-highContrast') === 'true')
+
+  const isDark = isColourDark(target)
+  const tints = getCSSTints(theme === 'auto' ? isDark : (theme !== 'dark'), highContrast)
 
   const keySource = new Observable<string>()
 
@@ -93,6 +98,11 @@ export default function Game ({ unlimited = false }: GameProps): ReactElement {
     else if (hex.length < 6) setHex(hex + value)
   }
 
+  function handleChangeHighContrast (value: boolean): void {
+    setHighContrast(value)
+    localStorage.setItem('hexle-highContrast', String(value))
+  }
+
   function showUnlimitedAd (): void {
     localStorage.setItem('seen-unlimited-ad', 'true')
     setModalContent(<UnlimitedModal onClose={() => setModalContent(null)} />)
@@ -102,7 +112,7 @@ export default function Game ({ unlimited = false }: GameProps): ReactElement {
     return localStorage.getItem('seen-unlimited-ad') === 'true'
   }
 
-  return <div style={{ backgroundColor: `#${target}`, ...getCSSTints(target) }} className="w-screen h-screen flex flex-col items-center md:justify-center p-4 gap-4">
+  return <div style={{ backgroundColor: `#${target}`, ...tints }} className="w-screen h-screen flex flex-col items-center md:justify-center p-4 gap-4">
     <HexBox value={hex} invalid={invalid} disabled={gameOver || hasPlayedToday()} onUpdate={setHex} onKey={handleKey} onSubmit={handleGuess} />
     <GuessList guesses={guesses} />
     <div className="mt-auto md:my-4"></div>
@@ -115,7 +125,7 @@ export default function Game ({ unlimited = false }: GameProps): ReactElement {
         </button>
       </> }
     </div>
-    <Keyboard onClick={handleVirtualKey} keySource={keySource} />
+    <Keyboard onClick={handleVirtualKey} keySource={keySource} onChangeTheme={value => setTheme(value)} onChangeHighContrast={handleChangeHighContrast} />
     {(gameOver || (!unlimited && hasPlayedToday())) && <Scoreboard {...{ gameData, unlimited }} />}
     {(showInstructions) && <Instructions onClose={() => setShowInstructions(false)} />}
     { (modalContent !== null && !showInstructions && !gameOver) && modalContent }

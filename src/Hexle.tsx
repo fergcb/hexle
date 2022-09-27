@@ -81,15 +81,38 @@ export function luma (c: Hex): number {
 }
 
 export function isColourDark (c: Hex): boolean {
-  return luma(c) < 40
+  return luma(c) < 56
 }
 
-export function getCSSTints (c: Hex): object {
-  const v = isColourDark(c) ? '255' : '0'
+const zinc: { [key: number]: string } = {
+  5: '#fafafa',
+  10: '#f7f7f8',
+  15: '#f4f4f5',
+  20: '#ececee',
+  25: '#e4e4e7',
+  30: '#dcdce0',
+  35: '#d4d4d8',
+  40: '#bbbbc1',
+  45: '#a1a1aa',
+  50: '#91919a',
+  55: '#81818a',
+  60: '#71717a',
+  65: '#62626b',
+  70: '#52525b',
+  75: '#494951',
+  80: '#3f3f46',
+  85: '#333338',
+  90: '#27272a',
+  95: '#202023',
+  100: '#18181b',
+}
+
+export function getCSSTints (isDark: boolean, highContrast: boolean = false): object {
+  const v = isDark ? '255' : '0'
   return Object.fromEntries(
     Array.from(Array(20).keys())
       .map(n => (n + 1) * 5)
-      .map(n => [`--tint-${n.toString().padStart(2, '0')}`, `rgba(${v}, ${v}, ${v}, ${n / 100})`]),
+      .map(n => [`--tint-${n.toString().padStart(2, '0')}`, highContrast ? zinc[isDark ? n : 105 - n] : `rgba(${v}, ${v}, ${v}, ${n / 100})`]),
   )
 }
 
