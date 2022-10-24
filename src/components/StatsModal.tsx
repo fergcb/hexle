@@ -147,6 +147,10 @@ export default function StatsModal ({ onClose }: StatsModalProps): ReactElement 
       </div>
       <div className="flex flex-wrap mt-4 gap-6 justify-center">
         <div className="text-center font-bold">
+          <h3>Games Played</h3>
+          <div className="text-3xl">{allGames.length}</div>
+        </div>
+        <div className="text-center font-bold">
           <h3>Current Streak</h3>
           <div className="text-3xl">{gameData.currentStreak}</div>
         </div>
