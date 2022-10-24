@@ -53,7 +53,7 @@ export default function HexBox ({ value: parentValue, invalid, disabled, onUpdat
 
   const refocus = (): void => {
     setTimeout(() => {
-      if (inputRef?.current === null) return
+      if (inputRef?.current === null || disabled) return
       inputRef.current.focus()
     }, 200)
   }
