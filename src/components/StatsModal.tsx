@@ -92,21 +92,21 @@ export default function StatsModal ({ onClose }: StatsModalProps): ReactElement 
 
   const mean = (total / allGames.length).toFixed(0)
 
-  return <div className="absolute t-0 l-0 w-screen h-screen -mt-4 md:mt-0 font-mono text-zinc-300 bg-zinc-800 flex justify-center items-center">
+  return <div className="absolute t-0 l-0 w-screen h-screen -mt-4 md:mt-0 font-mono text-zinc-300 bg-zinc-800 flex justify-center sm:items-center pt-8 sm:p-0">
     <button onClick={onClose} className="absolute md:hidden top-1 right-1 sm:top-4 sm:right-4 flex justify-center items-center rounded-full fill-zinc-500 hover:bg-zinc-700 hover:fill-zinc-400 transition-colors duration-200 w-10 h-10 sm:w-14 sm:h-14">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox='0 0 48 48' className="w-10 h-10 sm:w-12 sm:h-12">
         <path d="m24 27.2-9.9 9.9q-.7.7-1.625.7t-1.575-.7q-.7-.65-.7-1.575 0-.925.7-1.575L20.8 24l-9.9-9.9q-.65-.65-.65-1.6 0-.95.65-1.6.6-.65 1.55-.65.95 0 1.65.65l9.9 9.95 9.95-10q.65-.65 1.575-.65.925 0 1.625.65.65.7.65 1.625t-.65 1.575l-9.95 9.9 9.9 9.95q.7.7.7 1.625t-.7 1.575q-.65.7-1.6.7-.95 0-1.55-.7Z"/>
       </svg>
     </button>
-    <div className="max-h-full p-2 md:p-0 flex flex-col items-flex-start w-full max-w-[60ch] relative">
+    <div className="max-h-full p-2 md:p-0 flex flex-col items-flex-start w-full max-w-[60ch] relative overflow-x-hidden overflow-y-auto sm:overflow-hidden">
       <button onClick={onClose} className="absolute -top-14 -right-14 hidden md:flex justify-center items-center rounded-full fill-zinc-500 hover:bg-zinc-700 hover:fill-zinc-400 transition-colors duration-200 w-14 h-14">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox='0 0 48 48' className="w-12 h-12">
           <path d="m24 27.2-9.9 9.9q-.7.7-1.625.7t-1.575-.7q-.7-.65-.7-1.575 0-.925.7-1.575L20.8 24l-9.9-9.9q-.65-.65-.65-1.6 0-.95.65-1.6.6-.65 1.55-.65.95 0 1.65.65l9.9 9.95 9.95-10q.65-.65 1.575-.65.925 0 1.625.65.65.7.65 1.625t-.65 1.575l-9.95 9.9 9.9 9.95q.7.7.7 1.625t-.7 1.575q-.65.7-1.6.7-.95 0-1.55-.7Z"/>
         </svg>
       </button>
 
-      <h1 className="font-bold text-4xl whitespace-nowrap text-center mb-4">My Stats</h1>
-      <h2 className="font-bold text-2xl whitespace-nowrap mb-2 flex justify-between items-center">
+      <h1 className="font-bold text-2xl sm:text-4xl whitespace-nowrap text-center mb-4">My Stats</h1>
+      <h2 className="font-bold text-xl sm:text-2xl whitespace-nowrap mb-2 flex justify-between items-center">
         Score History:
         <select onChange={e => setTimeScale(parseFloat(e.target.value) as TimeScale)} className="bg-tint/40 text-base font-semibold rounded py-1 px-2 w-32">
           <option value={TimeScale.ALL_TIME}>All time</option>
@@ -124,9 +124,9 @@ export default function StatsModal ({ onClose }: StatsModalProps): ReactElement 
           </LineChart>
         </ResponsiveContainer>
       </div>
-      <h2 className="font-bold text-2xl whitespace-nowrap mt-4 flex justify-between items-center">Performance by Hue:</h2>
-      <div className="w-full">
-        <ResponsiveContainer width="100%" aspect={5}>
+      <h2 className="font-bold text-xl sm:text-2xl whitespace-nowrap mt-4 flex justify-between items-center">Performance by Hue:</h2>
+      <div className="w-full -mb-4">
+        <ResponsiveContainer width="100%" aspect={4}>
           <AreaChart data={huePoints}>
             <defs>
               <linearGradient id="hues" x1="0" y1="0" x2="1" y2="0">
@@ -145,30 +145,30 @@ export default function StatsModal ({ onClose }: StatsModalProps): ReactElement 
           </AreaChart>
         </ResponsiveContainer>
       </div>
-      <div className="flex flex-wrap mt-4 gap-6 justify-center">
+      <div className="flex flex-wrap gap-6 justify-center">
         <div className="text-center font-bold">
           <h3>Games Played</h3>
-          <div className="text-3xl">{allGames.length}</div>
+          <div className="text-xl sm:text-3xl">{allGames.length}</div>
         </div>
         <div className="text-center font-bold">
           <h3>Current Streak</h3>
-          <div className="text-3xl">{gameData.currentStreak}</div>
+          <div className="text-xl sm:text-3xl">{gameData.currentStreak}</div>
         </div>
         <div className="text-center font-bold">
           <h3>Longest Streak</h3>
-          <div className="text-3xl">{gameData.longestStreak}</div>
+          <div className="text-xl sm:text-3xl">{gameData.longestStreak}</div>
         </div>
         <div className="text-center font-bold">
           <h3>All Time Score</h3>
-          <div className="text-3xl">{total}</div>
+          <div className="text-xl sm:text-3xl">{total}</div>
         </div>
         <div className="text-center font-bold">
           <h3>Personal Best</h3>
-          <div className="text-3xl">{highScore}</div>
+          <div className="text-xl sm:text-3xl">{highScore}</div>
         </div>
         <div className="text-center font-bold">
           <h3>All Time Avg.</h3>
-          <div className="text-3xl">{mean}</div>
+          <div className="text-xl sm:text-3xl">{mean}</div>
         </div>
       </div>
     </div>
