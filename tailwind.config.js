@@ -18,6 +18,9 @@ module.exports = {
             .map(n => [`tint/${n}`, `var(--tint-${n.toString().padStart(2, '0')})`]),
         ),
         ...defaultTheme.colors
+      },
+      screens: {
+        'hover-supported': {'raw': '(hover: hover)'},
       }
     },
   },
