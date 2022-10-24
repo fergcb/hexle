@@ -2,6 +2,7 @@ import { ReactElement, useState } from 'react'
 import { GameData, getLastGame, scoreMessage } from '../Hexle'
 import Button from './Button'
 import ShareDialog from './ShareDialog'
+import StatsModal from './StatsModal'
 
 export interface ScoreboardProps {
   gameData: GameData
@@ -23,6 +24,7 @@ export function Swatch ({ name, colour }: SwatchProps): ReactElement {
 
 export default function Scoreboard ({ gameData, unlimited }: ScoreboardProps): ReactElement {
   const [showShareDialog, setShowShareDialog] = useState(false)
+  const [showStatsModal, setShowStatsModal] = useState(false)
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const todaysGame = unlimited ? gameData.unlimitedGames[gameData.unlimitedGames.length - 1] : getLastGame(gameData)!
@@ -66,6 +68,14 @@ export default function Scoreboard ({ gameData, unlimited }: ScoreboardProps): R
                   <h3>All Time Score:</h3>
                   <div className="text-3xl">{gameData.totalScore}</div>
                 </div>
+                <div className="text-center font-bold">
+                  <Button dark onClick={() => setShowStatsModal(true)}>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox='0 0 48 48' className="w-7 h-7">
+                      <path d="M5.55 42.75q-1.05 0-1.675-.625T3.25 40.45V19.5q0-1 .625-1.65.625-.65 1.675-.65h6.1q1 0 1.65.65.65.65.65 1.65v20.95q0 1.05-.65 1.675t-1.65.625Zm15.3 0q-1.05 0-1.675-.625t-.625-1.675V7.5q0-1 .625-1.65.625-.65 1.675-.65h6.35q1 0 1.65.65.65.65.65 1.65v32.95q0 1.05-.65 1.675t-1.65.625Zm15.55 0q-1.05 0-1.675-.625T34.1 40.45V23.5q0-1 .625-1.65.625-.65 1.675-.65h6.1q1 0 1.65.65.65.65.65 1.65v16.95q0 1.05-.65 1.675t-1.65.625Z"/>
+                    </svg>
+                    Stats
+                  </Button>
+                </div>
               </div>
             </>
           : <>
@@ -84,5 +94,6 @@ export default function Scoreboard ({ gameData, unlimited }: ScoreboardProps): R
       </div>
     </div>
     { showShareDialog && <ShareDialog gameData={gameData} onClose={() => setShowShareDialog(false)} /> }
+    { showStatsModal && <StatsModal onClose={() => setShowStatsModal(false)} /> }
   </>
 }
