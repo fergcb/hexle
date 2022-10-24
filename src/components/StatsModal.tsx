@@ -1,6 +1,6 @@
 import { ReactElement, useState } from 'react'
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
-import { getDailyTarget, loadData } from '../Hexle'
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Area, AreaChart } from 'recharts'
+import { getDailyTarget, HexToRGB, loadData, RGBtoHSL } from '../Hexle'
 
 export interface StatsModalProps {
   onClose: () => void
@@ -31,6 +31,54 @@ export default function StatsModal ({ onClose }: StatsModalProps): ReactElement 
     time: new Date(game.date).getTime(),
     score: game.score,
   }))
+
+  const allScoresbyHue = games
+    .map(game => ({
+      hue: RGBtoHSL(HexToRGB(game.target))[0],
+      score: game.score,
+    }))
+    .sort((a, b) => a.hue - b.hue)
+
+  const collatedHuePoints: Array<{hue: number, scores: number[]}> = [{
+    hue: allScoresbyHue[0].hue,
+    scores: [allScoresbyHue[0].score],
+  }]
+
+  for (let i = 1; i < allScoresbyHue.length; i++) {
+    const point = allScoresbyHue[i]
+
+    const last = collatedHuePoints[collatedHuePoints.length - 1]
+    if (point.hue === last.hue) {
+      last.scores.push(point.score)
+    } else {
+      collatedHuePoints.push({
+        hue: point.hue,
+        scores: [point.score],
+      })
+    }
+  }
+
+  const huePoints = collatedHuePoints.map(point => ({
+    hue: point.hue,
+    score: Math.round(point.scores.reduce((a, b) => a + b) / point.scores.length),
+  }))
+
+  const minHue = huePoints.reduce((a, b) => a.hue < b.hue ? a : b)
+  const maxHue = huePoints.reduce((a, b) => a.hue > b.hue ? a : b)
+
+  if (maxHue.hue !== 360) {
+    huePoints.push({
+      hue: 360,
+      score: (maxHue.score + minHue.score) / 2,
+    })
+  }
+
+  if (minHue.hue !== 0) {
+    huePoints.unshift({
+      hue: 0,
+      score: (maxHue.score + minHue.score) / 2,
+    })
+  }
 
   const dateFormatter = (timestamp: number): string => new Date(timestamp).toLocaleDateString() + '     '
 
@@ -74,6 +122,27 @@ export default function StatsModal ({ onClose }: StatsModalProps): ReactElement 
             <YAxis domain={[0, 5000]} stroke="#a1a1aa" strokeWidth={2}/>
             <Tooltip labelFormatter={dateFormatter} contentStyle={{ backgroundColor: '#18181b', borderRadius: '0.25rem', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)' }}/>
           </LineChart>
+        </ResponsiveContainer>
+      </div>
+      <h2 className="font-bold text-2xl whitespace-nowrap mt-4 flex justify-between items-center">Performance by Hue:</h2>
+      <div className="w-full">
+        <ResponsiveContainer width="100%" aspect={5}>
+          <AreaChart data={huePoints}>
+            <defs>
+              <linearGradient id="hues" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stopColor="#f04c4c"/>
+                <stop offset="16.66%" stopColor="#f0f04c"/>
+                <stop offset="33.33%" stopColor="#4cf04c"/>
+                <stop offset="50%" stopColor="#4cf0f0"/>
+                <stop offset="66.66%" stopColor="#4c4cf0"/>
+                <stop offset="83.33%" stopColor="#f04cf0"/>
+                <stop offset="100%" stopColor="#f04c4c"/>
+              </linearGradient>
+            </defs>
+            <Area type="basis" dataKey="score" stroke="none" strokeWidth={3} dot={false} fillOpacity={1} fill="url(#hues)" />
+            <XAxis dataKey="hue" type="number" domain={['dataMin', 'dataMax']} stroke="none" tick={false}/>
+
+          </AreaChart>
         </ResponsiveContainer>
       </div>
       <div className="flex flex-wrap mt-4 gap-6 justify-center">
