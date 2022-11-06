@@ -1,6 +1,7 @@
 import { ReactElement, useState } from 'react'
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts'
-import { getDailyTarget, HexToRGB, loadData, RGBtoHSL } from '../Hexle'
+import { ContentType } from 'recharts/types/component/Tooltip'
+import { getDailyTarget, HexToRGB, loadData, Outcome, RGBtoHSL } from '../Hexle'
 
 export interface StatsModalProps {
   onClose: () => void
@@ -12,11 +13,25 @@ enum TimeScale {
   DAYS_7 = 7
 }
 
+interface Game extends Outcome {
+  average: number
+}
+
 export default function StatsModal ({ onClose }: StatsModalProps): ReactElement {
   const [timeScale, setTimeScale] = useState(TimeScale.ALL_TIME)
 
   const gameData = loadData()
-  const allGames = Object.values(gameData.games)
+  const allGames = Object
+    .values(gameData.games)
+    .map((outcome, i, games) => {
+      const game = outcome as Game
+      game.average = Math.round(games
+        .slice(0, i + 1)
+        .map(game => game.score)
+        .reduce((a, b) => a + b) / (i + 1))
+      return game
+    })
+
   const games = allGames
     .filter(game => {
       if (timeScale === TimeScale.ALL_TIME) return true
@@ -30,6 +45,7 @@ export default function StatsModal ({ onClose }: StatsModalProps): ReactElement 
   const points = games.map(game => ({
     time: new Date(game.date).getTime(),
     score: game.score,
+    average: game.average,
   }))
 
   const hueBars = [
@@ -78,6 +94,30 @@ export default function StatsModal ({ onClose }: StatsModalProps): ReactElement 
 
   const dateFormatter = (timestamp: number): string => new Date(timestamp).toLocaleDateString() + '     '
 
+  const tooltipContent: ContentType<number, string> = ({ active, payload, label }) => {
+    active = active ?? false
+    if (active && payload !== undefined && payload.length > 0) {
+      const date = new Date(label).toLocaleDateString()
+      const average = payload[0].value
+      const score = payload[2].value
+      return (
+        <div className="rounded-md drop-shadow-lg bg-zinc-900 p-2 border border-zinc-600">
+          <h4 className="font-bold text-sm md:text-lg">{date}</h4>
+          <ul>
+            <li className="text-sm md:text-base flex items-center">
+              <span className="inline-block w-4 h-4 rounded-full border-2 border-tint/10 mr-2" style={{ backgroundColor: '#' + getDailyTarget() }}></span>
+              Score: {score}
+            </li>
+            <li className="text-sm md:text-base flex items-center">
+              <span className="inline-block w-4 h-4 rounded-full border-2 border-zinc-500 mr-2"></span>
+              Avg.: {average}
+            </li>
+          </ul>
+        </div>
+      )
+    }
+  }
+
   const highScore = allGames
     .map(game => game.score)
     .reduce((a, b) => a > b ? a : b)
@@ -94,8 +134,8 @@ export default function StatsModal ({ onClose }: StatsModalProps): ReactElement 
         <path d="m24 27.2-9.9 9.9q-.7.7-1.625.7t-1.575-.7q-.7-.65-.7-1.575 0-.925.7-1.575L20.8 24l-9.9-9.9q-.65-.65-.65-1.6 0-.95.65-1.6.6-.65 1.55-.65.95 0 1.65.65l9.9 9.95 9.95-10q.65-.65 1.575-.65.925 0 1.625.65.65.7.65 1.625t-.65 1.575l-9.95 9.9 9.9 9.95q.7.7.7 1.625t-.7 1.575q-.65.7-1.6.7-.95 0-1.55-.7Z"/>
       </svg>
     </button>
-    <div className="max-h-full p-2 md:p-0 flex flex-col items-flex-start w-full max-w-[60ch] relative overflow-x-hidden overflow-y-auto sm:overflow-hidden">
-      <button onClick={onClose} className="absolute -top-14 -right-14 hidden md:flex justify-center items-center rounded-full fill-zinc-500 hover:bg-zinc-700 hover:fill-zinc-400 transition-colors duration-200 w-14 h-14">
+    <div className="max-h-full p-2 md:p-0 flex flex-col items-flex-start w-full max-w-[60ch] relative">
+      <button onClick={onClose} className="z-10 absolute -top-14 -right-14 hidden md:flex justify-center items-center rounded-full fill-zinc-500 hover:bg-zinc-700 hover:fill-zinc-400 transition-colors duration-200 w-14 h-14">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox='0 0 48 48' className="w-12 h-12">
           <path d="m24 27.2-9.9 9.9q-.7.7-1.625.7t-1.575-.7q-.7-.65-.7-1.575 0-.925.7-1.575L20.8 24l-9.9-9.9q-.65-.65-.65-1.6 0-.95.65-1.6.6-.65 1.55-.65.95 0 1.65.65l9.9 9.95 9.95-10q.65-.65 1.575-.65.925 0 1.625.65.65.7.65 1.625t-.65 1.575l-9.95 9.9 9.9 9.95q.7.7.7 1.625t-.7 1.575q-.65.7-1.6.7-.95 0-1.55-.7Z"/>
         </svg>
@@ -104,24 +144,26 @@ export default function StatsModal ({ onClose }: StatsModalProps): ReactElement 
       <h1 className="font-bold text-2xl sm:text-4xl whitespace-nowrap text-center mb-4">My Stats</h1>
       <h2 className="font-bold text-xl sm:text-2xl whitespace-nowrap mb-2 flex justify-between items-center">
         Score History:
-        <select onChange={e => setTimeScale(parseFloat(e.target.value) as TimeScale)} className="bg-tint/40 text-base font-semibold rounded py-1 px-2 w-32">
+        <select onChange={e => setTimeScale(parseFloat(e.target.value) as TimeScale)} className="bg-zinc-900 text-base font-semibold rounded py-1 px-2 w-32">
           <option value={TimeScale.ALL_TIME}>All time</option>
           <option value={TimeScale.DAYS_30}>≤30 days</option>
           <option value={TimeScale.DAYS_7}>≤7 days</option>
         </select>
       </h2>
-      <div className="w-[calc(100% + 1.5rem)] bg-tint/40 rounded pr-4 pt-4">
+      <div className="w-[calc(100% + 1.5rem)] rounded pr-4 pt-4 bg-zinc-900">
         <ResponsiveContainer width="100%" aspect={2}>
           <LineChart data={points}>
+            <Line type="monotone" dataKey="average" stroke="#71717a" strokeWidth={2} dot={false} strokeDasharray="6 4" />
+            <Line type="monotone" dataKey="score" stroke={'var(--tint-05)'} strokeWidth={7} dot={false} name="contrast" />
             <Line type="monotone" dataKey="score" stroke={'#' + getDailyTarget()} strokeWidth={3} dot={false} />
             <XAxis dataKey="time" type="number" tickFormatter={dateFormatter} domain={['dataMin', 'dataMax']} minTickGap={40} stroke="#a1a1aa" strokeWidth={2} tickMargin={8}/>
             <YAxis domain={[(dataMin: number) => Math.max(0, dataMin - 1000), 5000]} stroke="#a1a1aa" strokeWidth={2} />
-            <Tooltip labelFormatter={dateFormatter} contentStyle={{ backgroundColor: '#18181b', borderRadius: '0.25rem', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)' }}/>
+            <Tooltip labelFormatter={dateFormatter} content={tooltipContent} contentStyle={{ backgroundColor: '#18181b', borderRadius: '0.25rem', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)' }}/>
           </LineChart>
         </ResponsiveContainer>
       </div>
       <h2 className="font-bold text-xl sm:text-2xl whitespace-nowrap mt-4 flex justify-between items-center">Performance by Hue:</h2>
-      <div className="w-full mt-2 mb-4">
+      <div className="w-full mt-2 mb-2">
         <ResponsiveContainer width="100%" aspect={5}>
           <BarChart data={hueBars}>
             <Bar dataKey="averageScore" stroke="none" minPointSize={5} radius={[4, 4, 0, 0]}>
@@ -136,7 +178,7 @@ export default function StatsModal ({ onClose }: StatsModalProps): ReactElement 
           </BarChart>
         </ResponsiveContainer>
       </div>
-      <div className="flex flex-wrap gap-6 justify-center">
+      <div className="flex flex-wrap gap-6 justify-center overflow-y-scroll pt-2 pb-4">
         <div className="text-center font-bold">
           <h3>Games Played</h3>
           <div className="text-xl sm:text-3xl">{allGames.length}</div>
