@@ -22,7 +22,7 @@ export default function StatsModal ({ onClose }: StatsModalProps): ReactElement 
         </svg>
       </button>
 
-      <div className="flex gap-2 mb-4 justify-end">
+      <div className="flex gap-2 mb-4">
         <button onClick={() => setCurrentTab('stats')} className={`flex gap-2 items-center justify-center fill-zinc-300 text-zinc-300 inline-block rounded px-2 py-1 transition-colors ${currentTab === 'stats' ? 'bg-zinc-800' : 'bg-zinc-900 hover:bg-zinc-700'}`}>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox='0 0 48 48' className="w-7 h-7">
             <path d="M5.55 42.75q-1.05 0-1.675-.625T3.25 40.45V19.5q0-1 .625-1.65.625-.65 1.675-.65h6.1q1 0 1.65.65.65.65.65 1.65v20.95q0 1.05-.65 1.675t-1.65.625Zm15.3 0q-1.05 0-1.675-.625t-.625-1.675V7.5q0-1 .625-1.65.625-.65 1.675-.65h6.35q1 0 1.65.65.65.65.65 1.65v32.95q0 1.05-.65 1.675t-1.65.625Zm15.55 0q-1.05 0-1.675-.625T34.1 40.45V23.5q0-1 .625-1.65.625-.65 1.675-.65h6.1q1 0 1.65.65.65.65.65 1.65v16.95q0 1.05-.65 1.675t-1.65.625Z"/>
