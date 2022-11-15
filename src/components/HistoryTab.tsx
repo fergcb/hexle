@@ -5,6 +5,7 @@ export default function HistoryTab (): ReactElement {
   const gameData = loadData()
   const games = Object.values(gameData.games).sort((a, b) => (new Date(b.date).getTime() - new Date(a.date).getTime()))
 
+
   return <div>
     <h1 className="font-bold text-2xl sm:text-4xl whitespace-nowrap text-center mb-4">History</h1>
     <ul className="max-h-[75vh] flex flex-col gap-2 p-2 items-stretch overflow-y-scroll">
