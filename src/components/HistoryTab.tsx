@@ -3,7 +3,7 @@ import { getCSSTints, isColourDark, loadData } from '../Hexle'
 
 export default function HistoryTab (): ReactElement {
   const gameData = loadData()
-  const games = Object.values(gameData.games)
+  const games = Object.values(gameData.games).sort((a, b) => (new Date(a.date).getTime() - new Date(b.date).getTime()))
 
   return <div>
     <h1 className="font-bold text-2xl sm:text-4xl whitespace-nowrap text-center mb-4">History</h1>
