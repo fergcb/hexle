@@ -199,13 +199,21 @@ export function loadData (): GameData {
     unlimitedGames: [],
   }
 
+  let data
   const json = localStorage.getItem('hexleData')
-  if (json === null) {
-    return defaultData
+  if (json !== null) {
+    data = JSON.parse(json) as GameData
+  } else {
+    data = defaultData
   }
-  const data = JSON.parse(json) as GameData
+
   data.currentStreak = checkStreak(data)
-  return { ...defaultData, ...data }
+  data.longestStreak = getLongestStreak(data)
+
+  const final = { ...defaultData, ...data }
+  localStorage.setItem('hexleData', JSON.stringify(final))
+
+  return final
 }
 
 export function getToday (): string {
