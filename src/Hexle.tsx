@@ -224,14 +224,17 @@ export function getLastGame (data: GameData): Outcome | undefined {
 const oneDay = 86400000
 
 export function checkStreak (data: GameData): number {
-  const lastGame = getLastGame(data)
-  if (lastGame === undefined) return 0
-  const lastGameDate = new Date(lastGame.date)
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  const delta = today.getTime() - lastGameDate.getTime()
-  if (delta <= oneDay) return data.currentStreak
-  return 0
+  const dates = Object.keys(data.games).sort().reverse()
+  let prev = new Date()
+  prev.setHours(0, 0, 0, 0)
+  let i
+  for (i = 0; i < dates.length; i++) {
+    const date = new Date(dates[i])
+    const delta = prev.getTime() - date.getTime()
+    prev = date
+    if (delta > oneDay) break
+  }
+  return i
 }
 
 export function getStreak (data: GameData): number {
