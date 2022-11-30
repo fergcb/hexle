@@ -68,6 +68,7 @@ Try to beat my score!
           <p className="mt-4 text-center">Try to beat my score:</p>
         </div>
         <span className="text-xl bg-tint/25 px-4 py-1 mt-1" style={{ color: `#${target}` }}>https://hexle.fergcb.uk/</span>
+        <span className="text-xl text-zinc-400 px-4 py-1 mt-1">by <a href="https://fergusbentley.com" target="_blank" rel="noopener noreferrer" className="hover:text-zinc-300 transition-colors duration-150">Fergus Bentley</a></span>
       </div>
       <div className="flex mt-8 items-center gap-2">
         <div>Take a screenshot or use your device's share menu:</div>

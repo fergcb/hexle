@@ -73,9 +73,9 @@ export function Break (): ReactElement {
 }
 
 export default function Keyboard ({ onClick, keySource, ...handlers }: KeyboardProps): ReactElement {
-  return <div>
+  return <div className="mb-16">
     <ThemeSelector {...handlers} />
-    <div className="grid grid-cols-6 gap-1 mb-16 justify-center max-w-32 mt-1">
+    <div className="grid grid-cols-6 gap-1 justify-center max-w-32 mt-1">
       <CharKey char="0" onClick={onClick} keySource={keySource} />
       <CharKey char="1" onClick={onClick} keySource={keySource} />
       <CharKey char="2" onClick={onClick} keySource={keySource} />
@@ -96,6 +96,10 @@ export default function Keyboard ({ onClick, keySource, ...handlers }: KeyboardP
       <CharKey char="d" onClick={onClick} keySource={keySource} />
       <CharKey char="e" onClick={onClick} keySource={keySource} />
       <CharKey char="f" onClick={onClick} keySource={keySource} />
+    </div>
+    <div className="font-mono text-lg text-tint/30 font-bold text-right">
+      by&nbsp;
+      <a href="https://fergusbentley.com" target="_blank" rel="noopener noreferrer" className="hover:text-tint/50 transition-colors duration-150">Fergus Bentley</a>
     </div>
   </div>
 }
