@@ -1,5 +1,6 @@
 import { ReactElement, useState } from 'react'
 import Observable from '../Observable'
+import HelpButton from './HelpButton'
 import ThemeSelector from './ThemeSelector'
 import Tooltip from './Tooltip'
 
@@ -23,6 +24,7 @@ export interface CharKeyProps extends KeyObserver, Clickable {
 export interface UtilityKeyProps extends KeyObserver, Clickable {}
 
 export interface KeyboardProps extends KeyObserver, Clickable {
+  onSummonHelp: () => void
   onChangeTheme: (value: string) => void
   onChangeHighContrast: (value: boolean) => void
 }
@@ -72,9 +74,14 @@ export function Break (): ReactElement {
   return <div className="basis-full h-0"></div>
 }
 
-export default function Keyboard ({ onClick, keySource, ...handlers }: KeyboardProps): ReactElement {
+export default function Keyboard ({ onClick, keySource, onSummonHelp, ...handlers }: KeyboardProps): ReactElement {
   return <div className="mb-16">
-    <ThemeSelector {...handlers} />
+    <div className="flex justify-between">
+      <ThemeSelector {...handlers} />
+      <Tooltip content="Help">
+        <HelpButton onClick={onSummonHelp}></HelpButton>
+      </Tooltip>
+    </div>
     <div className="grid grid-cols-6 gap-1 justify-center max-w-32 mt-1">
       <CharKey char="0" onClick={onClick} keySource={keySource} />
       <CharKey char="1" onClick={onClick} keySource={keySource} />
